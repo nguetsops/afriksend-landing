@@ -5,19 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SendAfrik - Landing</title>
   <link rel="stylesheet" href="style.css" />
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const data = {
+        nom: document.getElementById("nom").value,
+        email: document.getElementById("email").value,
+        whatsapp: document.getElementById("whatsapp").value,
+        pays: document.getElementById("pays").value,
+        beta: document.getElementById("beta").checked ? "Oui" : "Non",
+        date: new Date().toLocaleString()
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbxlY0lZZVj7hz4ZguG3efuwQRlPI2HnTLs1tkAflCWE2Tn_Pln1l0cYVHxJe0IKayjo4A/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      document.getElementById("form").reset();
+      alert("Merci ! Nous vous contacterons bientôt.");
+    }
+
+    function simulateur() {
+      const montant = parseFloat(document.getElementById("montant").value);
+      if (!montant || montant <= 2000) {
+        document.getElementById("resultat").innerText = "Veuillez entrer un montant supérieur à 2000 FCFA.";
+        return;
+      }
+      const frais = 2000;
+      const net = montant - frais;
+      const taux = 655;
+      const euros = (net / taux).toFixed(2);
+      document.getElementById("resultat").innerText =
+        `Frais: 2000 FCFA\nMontant net: ${net} FCFA\nMontant reçu: ~${euros} EUR`;
+    }
+  </script>
 </head>
 <body>
   <div class="container">
     <h1>Envoyez de l'argent depuis l'Afrique vers l'Europe</h1>
     <p>Mobile Money ou compte bancaire local → Compte bancaire France ou Italie</p>
-    <form>
-      <input type="text" placeholder="Nom complet" required />
-      <input type="email" placeholder="Email" required />
-      <input type="tel" placeholder="Numéro WhatsApp" required />
-      <input type="text" placeholder="Pays de résidence (ex: Cameroun)" required />
-      <label><input type="checkbox" /> Je souhaite être bêta-testeur</label>
+    <form id="form" onsubmit="handleSubmit(event)">
+      <input type="text" id="nom" placeholder="Nom complet" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="whatsapp" placeholder="Numéro WhatsApp" required />
+      <input type="text" id="pays" placeholder="Pays de résidence (ex: Cameroun)" required />
+      <label><input type="checkbox" id="beta" /> Je souhaite être bêta-testeur</label>
       <button type="submit">Je veux tester l'app</button>
     </form>
+
+    <div class="simulateur">
+      <h2>💸 Simuler un transfert</h2>
+      <input type="number" id="montant" placeholder="Montant en FCFA" />
+      <button onclick="simulateur()">Calculer</button>
+      <pre id="resultat"></pre>
+    </div>
   </div>
 </body>
 </html>
